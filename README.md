@@ -1,4 +1,4 @@
-# STOPWATCH LIBRARY README
+# TIMER LIBRARY README
 Welcome!
 This is my solution for using the millis function to create a timer.
 Keep in mind that the oscillator of the arduino is not very preciced and will differ after a few hours.
@@ -23,18 +23,24 @@ Cheers, Donut Studio!
 
 ***
 # Usage
-To use the library you have to include it in your sketch and create one or multiple objects of the Stopwatch class. 
-Then you can call functions to start and stop counting or get the elapsed time.
+To use the library you have to include it in your sketch and create one or multiple objects of the Timer class. 
+Then you can call functions to start and stop counting or get the elapsed/remaining time.
 Sample code:
 ```cpp
 // include the libraray
 #include "DonutStudioTimer.h"
 
-// create an object of the Timer class and set the timer to 00:01:30
+// create an object of the Timer class and set the timer to 1 minute and 30 seconds
 Timer t = Timer(0, 1, 30); 
 
 // start the timer
 t.startTimer();
+
+// start the timer
+int sec = t.getRemainingSeconds();
+int min = t.getRemainingMinutes();
+if (t.hasEnded())
+    t.stopTimer();
 ```
 
 
