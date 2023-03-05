@@ -1,6 +1,6 @@
 /*
   DonutStudioTimer.h - Library for creating a timer with the millis()-function from the arduino.
-  Created by Donut Studio, March 04, 2023.
+  Created by Donut Studio, March 05, 2023.
   Released into the public domain.
 */
 
@@ -21,22 +21,19 @@ void setup()
   Serial.println("starting timer...");
 
   // start the timer
-  t.startTimer();
+  t.start();
 }
 void loop() 
 {
   if (t.hasEnded())
   {
-    t.stopTimer();
+    t.stop(); // can also be removed if you restart the timer directly
     t.setMinutes((int)random(0, 3));
     t.setSeconds((int)random(0, 60));
-    t.startTimer();
+    t.start();
   }
   else
-  {
     printTimer();
-    //printTimerTotal();
-  }
 }
 
 void printTimer()
@@ -61,31 +58,5 @@ void printTimer()
   Serial.print(":");
   Serial.print(t.getRemainingMilliseconds());
   
-  Serial.println();
-}
-void printTimerTotal()
-{
-  Serial.print("total:   ");
-
-  Serial.print("elapsed: ");
-  Serial.print(t.getElapsedHours());
-  Serial.print(" ");
-  Serial.print(t.getTotalElapsedMinutes());
-  Serial.print(" ");
-  Serial.print(t.getTotalElapsedSeconds());
-  Serial.print(" ");
-  Serial.print(t.getTotalElapsedMilliseconds());
-
-  Serial.print(" - ");
-  
-  Serial.print("remaining: ");
-  Serial.print(t.getRemainingHours());
-  Serial.print(" ");
-  Serial.print(t.getTotalRemainingMinutes());
-  Serial.print(" ");
-  Serial.print(t.getTotalRemainingSeconds());
-  Serial.print(" ");
-  Serial.print(t.getTotalRemainingMilliseconds());
-
   Serial.println();
 }

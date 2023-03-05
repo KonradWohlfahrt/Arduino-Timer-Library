@@ -1,6 +1,6 @@
 /*
   DonutStudioTimer.h - Library for creating a timer with the millis()-function from the arduino.
-  Created by Donut Studio, March 04, 2023.
+  Created by Donut Studio, March 05, 2023.
   Released into the public domain.
 */
 
@@ -8,7 +8,7 @@
 #include "DonutStudioTimer.h"
 
 /*
-  --- CONSTRUCTOR ---
+  --- --- CONSTRUCTOR --- ---
 */
 
 Timer::Timer(int hours, int minutes, int seconds, int milliseconds, bool instantStart)
@@ -29,13 +29,14 @@ Timer::Timer(int hours, int minutes, int seconds, int milliseconds, bool instant
 
 
 /*
-  --- METHODS ---
-*/
-/*
-  --- timer ---
+  --- --- METHODS --- ---
 */
 
-void Timer::startTimer()
+/*
+  --- MAIN ---
+*/
+
+void Timer::start()
 {
   // recalculate the time
   calculateTimerValue();
@@ -44,12 +45,12 @@ void Timer::startTimer()
   // set the boolean
   _timerStarted = true;
 }
-void Timer::stopTimer()
+void Timer::stop()
 {
   // set the boolean
   _timerStarted = false;
 }
-bool Timer::hasEnded()
+bool Timer::isActive()
 {
   // check if the timer is not running, return true
   if (!_timerStarted)
@@ -60,7 +61,7 @@ bool Timer::hasEnded()
 
 
 /*
-  --- set ---
+  --- SETTINGS ---
 */
 
 void Timer::setMilliseconds(int milliseconds)
@@ -73,6 +74,10 @@ void Timer::setMilliseconds(int milliseconds)
   // recalculate the time
   calculateTimerValue();
 }
+int Timer::getMilliseconds()
+{
+  return _milliseconds;
+}
 void Timer::setSeconds(int seconds)
 {
   // check if the seconds are below zero
@@ -82,6 +87,10 @@ void Timer::setSeconds(int seconds)
   _seconds = seconds % 60;
   // recalculate the time
   calculateTimerValue();
+}
+int Timer::getSeconds()
+{
+  return _seconds;
 }
 void Timer::setMinutes(int minutes)
 {
@@ -93,6 +102,10 @@ void Timer::setMinutes(int minutes)
   // recalculate the time
   calculateTimerValue();
 }
+int Timer::getMinutes()
+{
+  return _minutes;
+}
 void Timer::setHours(int hours)
 {
   // check if the hours are below zero or greater than 1152 (48 days)
@@ -103,71 +116,24 @@ void Timer::setHours(int hours)
   // recalculate the time
   calculateTimerValue();
 }
+int Timer::getHours()
+{
+  return _hours;
+}
 
 
 /*
-  --- get total elapsed ---
+  --- ELAPSED TIME ---
 */
 
 unsigned long Timer::getTotalElapsedMilliseconds()
 {
+  // check if the timer is not active => return the maximal value
+  if (!isActive())
+    return _maxTimerValue;
   // calculate a duration to prevent the millis overflow
   return millis() - _timerStartTimestamp;
 }
-unsigned long Timer::getTotalElapsedSeconds()
-{
-  // calculate the elapsed seconds
-  return getTotalElapsedMilliseconds() / 1000;
-}
-unsigned long Timer::getTotalElapsedMinutes()
-{
-  // calculate the elapsed minutes
-  return getTotalElapsedMilliseconds() / 1000 / 60;
-}
-
-int Timer::getElapsedHours()
-{
-  // calculate the elapsed hours
-  return (int)(getTotalElapsedMilliseconds() / 1000 / 3600);
-}
-
-
-/*
-  --- get total remaining ---
-*/
-
-unsigned long Timer::getTotalRemainingMilliseconds()
-{
-  // get the elapsed milliseconds
-  unsigned long elapsed = getTotalElapsedMilliseconds();
-  // check if the elapsed time is over the maximal time => time over, return 0
-  if (elapsed > _maxTimerValue)
-    return 0;
-  // calculate the remaining time
-  return _maxTimerValue - elapsed;
-}
-unsigned long Timer::getTotalRemainingSeconds()
-{
-  // calculate the remaining seconds
-  return getTotalRemainingMilliseconds() / 1000;
-}
-unsigned long Timer::getTotalRemainingMinutes()
-{
-  // calculate the remaining minutes
-  return getTotalRemainingMilliseconds() / 1000 / 60;
-}
-
-int Timer::getRemainingHours()
-{
-  // calculate the remaining hours
-  return (int)(getTotalRemainingMilliseconds() / 1000 / 3600);
-}
-
-
-/*
-  --- get elapsed ---
-*/
-
 int Timer::getElapsedMilliseconds()
 {
   // calculate the elapsed milliseconds
@@ -176,19 +142,33 @@ int Timer::getElapsedMilliseconds()
 int Timer::getElapsedSeconds()
 {
   // calculate the elapsed seconds
-  return (int)(getTotalElapsedSeconds() % 60);
+  return (int)((getTotalElapsedMilliseconds() / 1000) % 60);
 }
 int Timer::getElapsedMinutes()
 {
   // calculate the elapsed minutes
-  return (int)(getTotalElapsedMinutes() % 60);
+  return (int)((getTotalElapsedMilliseconds() / 1000 / 60) % 60);
+}
+int Timer::getElapsedHours()
+{
+  // calculate the elapsed hours
+  return (int)(getTotalElapsedMilliseconds() / 1000 / 3600);
 }
 
 
 /*
-  --- get remaining ---
+  --- ELAPSED TIME ---
 */
-
+unsigned long Timer::getTotalRemainingMilliseconds()
+{
+  // get the elapsed milliseconds
+  unsigned long elapsed = getTotalElapsedMilliseconds();
+  // check if the elapsed time is over or equal to the maximal time => time over, return 0
+  if (elapsed >= _maxTimerValue)
+    return 0;
+  // calculate the remaining time
+  return _maxTimerValue - elapsed;
+}
 int Timer::getRemainingMilliseconds()
 {
   // calculate the remaining milliseconds
@@ -197,17 +177,22 @@ int Timer::getRemainingMilliseconds()
 int Timer::getRemainingSeconds()
 {
   // calculate the remaining seconds
-  return (int)(getTotalRemainingSeconds() % 60);
+  return (int)((getTotalRemainingMilliseconds() / 1000) % 60);
 }
 int Timer::getRemainingMinutes()
 {
   // calculate the remaining minutes
-  return (int)(getTotalRemainingMinutes() % 60);
+  return (int)((getTotalRemainingMilliseconds() / 1000 / 60) % 60);
+}
+int Timer::getRemainingHours()
+{
+  // calculate the remaining hours
+  return (int)(getTotalRemainingMilliseconds() / 1000 / 3600);
 }
 
 
 /*
-  --- PRIVATE ---
+  --- --- PRIVATE --- ---
 */
 
 void Timer::calculateTimerValue()
