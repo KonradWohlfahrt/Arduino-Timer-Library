@@ -34,8 +34,10 @@ class Timer
     void start();
     // stops the timer
     void stop();
-    // returns false if the timer is still running, true if not or the timer is stopped
+    // returns true if the timer is currently counting down or if the timer has ended, but was not stopped yet
     bool isActive();
+    // returns true if the countdown has ended
+    bool hasEnded();
 
 
     /*-- SETTINGS --*/

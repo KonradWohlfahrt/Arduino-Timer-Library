@@ -60,7 +60,8 @@ CONSTRUCTOR
 TIMER
 - `void start();` => starts the timer
 - `void stop();` => stops the timer
-- `bool isActive();` => returns false if the timer is still running, true if not or the timer is stopped
+- `bool isActive();` => returns true if the timer is currently counting down or if the timer has ended, but was not stopped yet
+- `bool hasEnded();` => returns true if the countdown has ended
 
 SETTINGS
 - `void setMilliseconds(int milliseconds);` => sets the milliseconds of the timer (maximum: 999)

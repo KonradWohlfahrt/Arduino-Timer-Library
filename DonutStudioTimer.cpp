@@ -24,7 +24,7 @@ Timer::Timer(int hours, int minutes, int seconds, int milliseconds, bool instant
 
   // start the timer if instantStart is set to true
   if (instantStart)
-    startTimer();
+    start();
 }
 
 
@@ -52,13 +52,17 @@ void Timer::stop()
 }
 bool Timer::isActive()
 {
-  // check if the timer is not running, return true
-  if (!_timerStarted)
-    return true;
-  // check if the time is up
-  return getTotalElapsedMilliseconds() >= _maxTimerValue;
+  // return the started boolean
+  return _timerStarted;
 }
-
+bool Timer::hasEnded()
+{
+  // check if the timer was started and return if it has ended yet
+  if (_timerStarted)
+    return getTotalElapsedMilliseconds() >= _maxTimerValue;
+  // return true if the timer is not active
+  return true;
+}
 
 /*
   --- SETTINGS ---
