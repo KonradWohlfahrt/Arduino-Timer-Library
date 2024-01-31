@@ -1,39 +1,47 @@
 /*
-  DonutStudioTimer.h - Library for creating a timer with the millis()-function from the arduino.
-  Created by Donut Studio, March 05, 2023.
+  DonutStudioTimer.h - Arduino library for creating a timer with the millis()-function.
+  Created by Donut Studio, January 30, 2024.
   Released into the public domain.
 */
 
 // include the libraray
-#include "DonutStudioTimer.h"
+#include <DonutStudioTimer.h>
 
-// create an object of the Timer class and set the timer to 00:01:30
-Timer t = Timer(0, 0, 10); 
+// connect GND and pin 2 to toggle pausing
+#define BUTTON 2
+
+// create an object of the Timer class and set the timer to 00h:01m:30s
+Timer t = Timer(0, 1, 30); 
+
 
 void setup() 
 {
-  // start the serial port
   Serial.begin(9600);
+  pinMode(BUTTON, INPUT_PULLUP);
 
-  // print timer values
   printTimer();
 
   Serial.println("starting timer...");
 
-  // start the timer
   t.start();
 }
 void loop() 
 {
   if (t.hasEnded())
   {
-    t.stop(); // can also be removed if you restart the timer directly
-    t.setMinutes((int)random(0, 3));
+    t.setMinutes(0);
     t.setSeconds((int)random(0, 60));
     t.start();
   }
   else
     printTimer();
+
+  if (digitalRead(BUTTON) == 0)
+  {
+    while (digitalRead(BUTTON) == 0);
+    t.setPause(!t.isPaused());
+    Serial.println("toggled pause...");
+  }
 }
 
 void printTimer()

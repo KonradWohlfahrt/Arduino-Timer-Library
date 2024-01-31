@@ -1,6 +1,6 @@
 # TIMER LIBRARY README
 Welcome!
-This is my solution for using the millis function to create a timer.
+This is my solution for the arduino to create a timer.
 Keep in mind that the oscillator of the arduino is not very preciced and will differ after a few hours.
 Feel free to use it anywere in your projects.
 Cheers, Donut Studio!
@@ -9,21 +9,15 @@ Cheers, Donut Studio!
 ***
 # Features
 - set the countdown time
-- start and stop the timer
-- get the remaining time
-- check if the time is over
-
-
-***
-# TODO
-- pause and resume the timer
+- start/stop and pause/resume the timer
+- get the remaining and elapsed time
 
 
 ***
 # Installation
 1. download the `DonutStudioTimer` folder and extract it into the libraries folder of the Arduino Software
 2. start your arduino ide and open the example sketch at `File/Examples/DonutStudioTimer/TimerTest.ino`
-3. upload the sketch and watch
+3. upload the sketch and take a look at the serial monitor
 
 
 ***
@@ -33,11 +27,11 @@ Then you can call functions to start and stop counting or get the elapsed/remain
 Sample code:
 ```cpp
 // include the libraray
-#include "DonutStudioTimer.h"
+#include <DonutStudioTimer.h>
 
-// create an object of the Timer class and set the timer to 1 minute and 30 seconds
+// 00h : 01m : 30s
 Timer t1 = Timer(0, 1, 30); 
-// create an object of the Timer class and set the timer to 1 hour, 1 minute, 1 second, 1 millisecond and start to count down
+// 01h : 01m : 01s : 01ms + start counting
 Timer t2 = Timer(1, 1, 1, 1, true); 
 
 // start the timer
@@ -55,27 +49,29 @@ bool val = t1.isActive();
 ***
 # Documentation
 CONSTRUCTOR
-- `Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0, bool instantStart = false);` => constructor for the class 
+- `Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0, bool instantStart = false);` => constructs a timer object with given values
 
 TIMER
-- `void start();` => starts the timer
-- `void stop();` => stops the timer
-- `bool isActive();` => returns true if the timer is currently counting down or if the timer has ended, but was not stopped yet
-- `bool hasEnded();` => returns true if the countdown has ended
+- `void start();` => start the timer
+- `void stop();` => stop the timer
+- `bool isActive();` => returns true if the timer was started
+- `bool hasEnded();` => returns true if the countdown has ended (or the timer is stopped)
+- `void setPause();` => pause or resume the timer
+- `bool isPaused();` => returns true if the timer is paused
 
 SETTINGS
-- `void setMilliseconds(int milliseconds);` => sets the milliseconds of the timer (maximum: 999)
-- `int getMilliseconds();` => returns the set milliseconds
-- `void setSeconds(int seconds);` => sets the seconds of the timer (maximum: 59)
-- `int getSeconds();` => returns the set seconds
-
-- `void setMinutes(int minutes);` => sets the minutes of the timer (maximum: 59)
-- `int getMinutes();` => returns the set minutes
-- `void setHours(int hours);` => sets the hours of the timer (maximum: 1152)
-- `int getHours();` => returns the set hours
+- `void setTimer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0);` => set the countdown time
+- `void setMilliseconds(int milliseconds);` => set the milliseconds of the timer (maximum: 999)
+- `int getMilliseconds();` => returns the milliseconds
+- `void setSeconds(int seconds);` => set the seconds of the timer (maximum: 59)
+- `int getSeconds();` => returns the seconds
+- `void setMinutes(int minutes);` => set the minutes of the timer (maximum: 59)
+- `int getMinutes();` => returns the minutes
+- `void setHours(int hours);` => set the hours of the timer (maximum: 1151)
+- `int getHours();` => returns the hours
 
 ELAPSED TIME
-- `unsigned long getTotalElapsedMilliseconds();` => returns the elapsed milliseconds since the start, if the timer is not active, it will return the set time 
+- `unsigned long getTotalElapsedMilliseconds();` => returns the elapsed milliseconds since the start, or the countdown time if the timer wasn't started
 - `int getElapsedMilliseconds();` => returns the elapsed milliseconds (0-999)
 - `int getElapsedSeconds();` => returns the elapsed seconds (0-59)
 - `int getElapsedMinutes();` => returns the elapsed minutes (0-59)
@@ -88,8 +84,9 @@ REMAINING TIME
 - `int getRemainingMinutes();` => returns the elapsed minutes (0-59)
 - `int getRemainingHours();` => returns the remaining hours
 
+
 ***
 # Credits
-DonutStudioTimer.h - Library for creating a timer with the millis()-function from the arduino.
-Created by Donut Studio, March 05, 2023.
+DonutStudioTimer.h - Arduino library for creating a timer with the millis()-function.
+Created by Donut Studio, January 30, 2024.
 Released into the public domain.

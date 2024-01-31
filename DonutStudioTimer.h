@@ -1,6 +1,6 @@
 /*
-  DonutStudioTimer.h - Library for creating a timer with the millis()-function from the arduino.
-  Created by Donut Studio, March 05, 2023.
+  DonutStudioTimer.h - Arduino library for creating a timer with the millis()-function.
+  Created by Donut Studio, January 30, 2024.
   Released into the public domain.
 */
 
@@ -12,57 +12,57 @@
 
 class Timer
 {
-  /*
-    --- PUBLIC ---
-  */
+  /* --- PUBLIC --- */
   public:
-    /*
-      --- CONSTRUCTOR ---
-    */
+    /* --- CONSTRUCTOR --- */
 
-    // constructor for the class 
+    // constructs a timer object with given values
     Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0, bool instantStart = false);
 
 
-    /*
-      --- METHODS ---
-    */
+    /* --- METHODS --- */
 
-    /*-- MAIN --*/
+    /* MAIN */
 
-    // starts the timer
+    // start the timer
     void start();
-    // stops the timer
+    // stop the timer
     void stop();
-    // returns true if the timer is currently counting down or if the timer has ended, but was not stopped yet
+    // returns true if the timer was started
     bool isActive();
-    // returns true if the countdown has ended
+    // returns true if the countdown has ended (or the timer is stopped)
     bool hasEnded();
+    // pause or resume the timer
+    void setPause(bool value);
+    // returns true if the timer is paused
+    bool isPaused();
 
 
-    /*-- SETTINGS --*/
+    /* SETTINGS */
 
-    // sets the milliseconds of the timer (maximum: 999)
+    // set the countdown time
+    void setTimer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0);
+    // set the milliseconds of the timer (maximum: 999)
     void setMilliseconds(int milliseconds);
-    // returns the set milliseconds
+    // returns the milliseconds
     int getMilliseconds();
-    // sets the seconds of the timer (maximum: 59)
+    // set the seconds of the timer (maximum: 59)
     void setSeconds(int seconds);
-    // returns the set seconds
+    // returns the seconds
     int getSeconds();
-    // sets the minutes of the timer (maximum: 59)
+    // set the minutes of the timer (maximum: 59)
     void setMinutes(int minutes);
-    // returns the set minutes
+    // returns the minutes
     int getMinutes();
-    // sets the hours of the timer (maximum: 1152)
+    // set the hours of the timer (maximum: 1151)
     void setHours(int hours);
-    // returns the set hours
+    // returns the hours
     int getHours();
 
 
-    /*-- ELAPSED TIME --*/
+    /* ELAPSED TIME */
 
-    // returns the elapsed milliseconds since the start, if the timer is not active, it will return the set time 
+    // returns the elapsed milliseconds since the start, or the countdown time if the timer wasn't started
     unsigned long getTotalElapsedMilliseconds();
     // returns the elapsed milliseconds (0-999)
     int getElapsedMilliseconds();
@@ -88,28 +88,27 @@ class Timer
     int getRemainingHours();
 
 
-  /*
-    --- PRIVATE ---
-  */
+  /* --- PRIVATE --- */
   private:
-    /*
-      --- METHODS ---
-    */
+    /* --- METHODS --- */
 
     // calculates the time of the timer in milliseconds
     void calculateTimerValue();
 
 
-    /*
-      --- VARIABLES ---
-    */
+    /* --- VARIABLES --- */
+
     int _milliseconds = 0;
     int _seconds = 0;
     int _minutes = 0;
     int _hours = 0;
 
     bool _timerStarted = false;
-    unsigned long _timerStartTimestamp;
+    unsigned long _startTimestamp;
     unsigned long _maxTimerValue;
+
+    bool _timerPaused = false;
+    unsigned long _pauseTimestamp;
+    unsigned long _pauseTime;
 };
 #endif
