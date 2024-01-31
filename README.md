@@ -51,7 +51,7 @@ CONSTRUCTOR
 TIMER
 - `void start();` => start the timer
 - `bool hasEnded();` => returns true if the countdown has ended
-- `void setPause();` => pause or resume the timer
+- `void setPause(bool value);` => pause or resume the timer
 - `bool isPaused();` => returns true if the timer is paused
 
 SETTINGS
