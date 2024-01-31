@@ -9,7 +9,7 @@ Cheers, Donut Studio!
 ***
 # Features
 - set the countdown time
-- start/stop and pause/resume the timer
+- pause/resume the timer
 - get the remaining and elapsed time
 
 
@@ -30,33 +30,28 @@ Sample code:
 #include <DonutStudioTimer.h>
 
 // 00h : 01m : 30s
-Timer t1 = Timer(0, 1, 30); 
-// 01h : 01m : 01s : 01ms + start counting
-Timer t2 = Timer(1, 1, 1, 1, true); 
+Timer t(0, 1, 30);
 
 // start the timer
-t1.start();
-// stop the timer
-t2.stop();
+t.start();
 
 // get timer values
-int sec = t2.getRemainingSeconds();
-int min = t2.getRemainingMinutes();
-bool val = t1.isActive();
+int sec = t.getElapsedMilliseconds();
+int min = t.getRemainingMinutes();
+bool val = t.isPaused();
 ```
+After you have changed the timer values, a call of `start()` will update the changes and restart the timer.
 
 
 ***
 # Documentation
 CONSTRUCTOR
-- `Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0, bool instantStart = false);` => constructs a timer object with given values
+- `Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0);` => constructs a timer object with given values
 
 TIMER
 - `void start();` => start the timer
-- `void stop();` => stop the timer
-- `bool isActive();` => returns true if the timer was started
-- `bool hasEnded();` => returns true if the countdown has ended (or the timer is stopped)
-- `void setPause(bool value);` => pause or resume the timer
+- `bool hasEnded();` => returns true if the countdown has ended
+- `void setPause();` => pause or resume the timer
 - `bool isPaused();` => returns true if the timer is paused
 
 SETTINGS
@@ -71,7 +66,7 @@ SETTINGS
 - `int getHours();` => returns the hours
 
 ELAPSED TIME
-- `unsigned long getTotalElapsedMilliseconds();` => returns the elapsed milliseconds since the start, or the countdown time if the timer wasn't started
+- `unsigned long getTotalElapsedMilliseconds();` => returns the elapsed milliseconds since the start
 - `int getElapsedMilliseconds();` => returns the elapsed milliseconds (0-999)
 - `int getElapsedSeconds();` => returns the elapsed seconds (0-59)
 - `int getElapsedMinutes();` => returns the elapsed minutes (0-59)

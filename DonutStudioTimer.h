@@ -17,7 +17,7 @@ class Timer
     /* --- CONSTRUCTOR --- */
 
     // constructs a timer object with given values
-    Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0, bool instantStart = false);
+    Timer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0);
 
 
     /* --- METHODS --- */
@@ -26,11 +26,7 @@ class Timer
 
     // start the timer
     void start();
-    // stop the timer
-    void stop();
-    // returns true if the timer was started
-    bool isActive();
-    // returns true if the countdown has ended (or the timer is stopped)
+    // returns true if the countdown has ended
     bool hasEnded();
     // pause or resume the timer
     void setPause(bool value);
@@ -62,7 +58,7 @@ class Timer
 
     /* ELAPSED TIME */
 
-    // returns the elapsed milliseconds since the start, or the countdown time if the timer wasn't started
+    // returns the elapsed milliseconds since the start
     unsigned long getTotalElapsedMilliseconds();
     // returns the elapsed milliseconds (0-999)
     int getElapsedMilliseconds();
@@ -103,12 +99,11 @@ class Timer
     int _minutes = 0;
     int _hours = 0;
 
-    bool _timerStarted = false;
-    unsigned long _startTimestamp;
-    unsigned long _maxTimerValue;
+    unsigned long _startTimestamp = 0;
+    unsigned long _maxTimerValue = 0;
 
     bool _timerPaused = false;
-    unsigned long _pauseTimestamp;
-    unsigned long _pauseTime;
+    unsigned long _pauseTimestamp = 0;
+    unsigned long _pauseTime = 0;
 };
 #endif

@@ -9,12 +9,10 @@
 
 /* --- CONSTRUCTOR --- */
 
-Timer::Timer(int hours, int minutes, int seconds, int milliseconds, bool instantStart)
+Timer::Timer(int hours, int minutes, int seconds, int milliseconds)
 {
   setTimer(hours, minutes, seconds, milliseconds);
-
-  if (instantStart)
-    start();
+  calculateTimerValue();
 }
 
 
@@ -25,28 +23,19 @@ void Timer::start()
 {
   calculateTimerValue();
   _startTimestamp = millis();
-  _timerStarted = true;
 
   _timerPaused = false;
   _pauseTime = 0;
 }
-void Timer::stop()
-{
-  _timerStarted = false;
-  _timerPaused = false;
-}
-bool Timer::isActive()
-{
-  return _timerStarted;
-}
 bool Timer::hasEnded()
 {
-  if (_timerStarted)
-    return getTotalElapsedMilliseconds() >= _maxTimerValue;
-  return true;
+  return getTotalElapsedMilliseconds() >= _maxTimerValue;
 }
 void Timer::setPause(bool value)
 {
+  if (_timerPaused == value)
+    return;
+
   _timerPaused = value;
   if (value)
     _pauseTimestamp = millis();
@@ -63,23 +52,16 @@ bool Timer::isPaused()
 
 void Timer::setTimer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0)
 {
-  if (milliseconds >= 0)
-    _milliseconds = milliseconds % 1000;
-  if (seconds >= 0)
-    _seconds = seconds % 60;
-  if (minutes >= 0)
-    _minutes = minutes % 60;
-  if (hours >= 0 && hours < 1152)
-    _hours = hours;
-
-  calculateTimerValue();
+  setMilliseconds(milliseconds);
+  setSeconds(seconds);
+  setMinutes(minutes);
+  setHours(hours);
 }
 void Timer::setMilliseconds(int milliseconds)
 {
   if (milliseconds < 0)
     return;
   _milliseconds = milliseconds % 1000;
-  calculateTimerValue();
 }
 int Timer::getMilliseconds()
 {
@@ -90,7 +72,6 @@ void Timer::setSeconds(int seconds)
   if (seconds < 0)
     return;
   _seconds = seconds % 60;
-  calculateTimerValue();
 }
 int Timer::getSeconds()
 {
@@ -101,7 +82,6 @@ void Timer::setMinutes(int minutes)
   if (minutes < 0)
     return;
   _minutes = minutes % 60;
-  calculateTimerValue();
 }
 int Timer::getMinutes()
 {
@@ -113,7 +93,6 @@ void Timer::setHours(int hours)
   if (hours < 0 || hours >= 1152)
     return;
   _hours = hours;
-  calculateTimerValue();
 }
 int Timer::getHours()
 {
@@ -125,10 +104,6 @@ int Timer::getHours()
 
 unsigned long Timer::getTotalElapsedMilliseconds()
 {
-  // timer is not started => return the maximal value
-  if (!_timerStarted)
-    return _maxTimerValue;
-
   unsigned long mil = millis();
   unsigned long elapsed = mil - _startTimestamp - _pauseTime;
   if (_timerPaused)

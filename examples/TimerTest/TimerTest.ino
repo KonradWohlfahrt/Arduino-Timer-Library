@@ -22,7 +22,6 @@ void setup()
   printTimer();
 
   Serial.println("starting timer...");
-
   t.start();
 }
 void loop() 
