@@ -56,7 +56,7 @@ TIMER
 - `void stop();` => stop the timer
 - `bool isActive();` => returns true if the timer was started
 - `bool hasEnded();` => returns true if the countdown has ended (or the timer is stopped)
-- `void setPause();` => pause or resume the timer
+- `void setPause(bool value);` => pause or resume the timer
 - `bool isPaused();` => returns true if the timer is paused
 
 SETTINGS
