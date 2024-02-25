@@ -50,7 +50,7 @@ bool Timer::isPaused()
 
 /* SETTINGS */
 
-void Timer::setTimer(int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0)
+void Timer::setTimer(int hours, int minutes, int seconds, int milliseconds)
 {
   setMilliseconds(milliseconds);
   setSeconds(seconds);
