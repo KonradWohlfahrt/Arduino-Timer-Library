@@ -1,11 +1,11 @@
 /*
   DonutStudioTimer.h - Arduino library for creating a timer with the millis()-function.
-  Created by Donut Studio, January 30, 2024.
+  Created by Donut Studio, March 11, 2024.
   Released into the public domain.
 */
 
-#ifndef DonutStudioTimer.h
-#define DonutStudioTimer.h
+#ifndef DonutStudioTimer_h
+#define DonutStudioTimer_h
 
 #include "Arduino.h"
 
