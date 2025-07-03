@@ -1,35 +1,29 @@
 /*
   DonutStudioTimer.h - Arduino library for creating a timer with the millis()-function.
-  Created by Donut Studio, January 30, 2024.
+  Created by Konrad Wohlfahrt, July 03, 2025.
   Released into the public domain.
 */
 
 #include "Arduino.h"
 #include "DonutStudioTimer.h"
 
-/* --- CONSTRUCTOR --- */
-
-Timer::Timer(int hours, int minutes, int seconds, int milliseconds)
+Timer::Timer(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)
 {
   setTimer(hours, minutes, seconds, milliseconds);
-  calculateTimerValue();
+  calculateTotalMilliseconds();
 }
 
 
-/* --- METHODS --- */
-/* MAIN */
-
-void Timer::start()
+void Timer::begin()
 {
-  calculateTimerValue();
+  calculateTotalMilliseconds();
   _startTimestamp = millis();
-
   _timerPaused = false;
   _pauseTime = 0;
 }
-bool Timer::hasEnded()
+bool Timer::isOver()
 {
-  return getTotalElapsedMilliseconds() >= _maxTimerValue;
+  return getTotalElapsedMilliseconds() >= _totalTimerMilliseconds;
 }
 void Timer::setPause(bool value)
 {
@@ -48,120 +42,110 @@ bool Timer::isPaused()
 }
 
 
-/* SETTINGS */
-
-void Timer::setTimer(int hours, int minutes, int seconds, int milliseconds)
+void Timer::setTimer(uint16_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)
 {
   setMilliseconds(milliseconds);
   setSeconds(seconds);
   setMinutes(minutes);
   setHours(hours);
 }
-void Timer::setMilliseconds(int milliseconds)
+uint32_t Timer::getTotalMilliseconds() 
 {
-  if (milliseconds < 0)
-    return;
+  calculateTotalMilliseconds();
+  return _totalTimerMilliseconds;
+}
+void Timer::setMilliseconds(uint16_t milliseconds)
+{
   _milliseconds = milliseconds % 1000;
 }
-int Timer::getMilliseconds()
+uint16_t Timer::getMilliseconds()
 {
   return _milliseconds;
 }
-void Timer::setSeconds(int seconds)
+void Timer::setSeconds(uint8_t seconds)
 {
-  if (seconds < 0)
-    return;
   _seconds = seconds % 60;
 }
-int Timer::getSeconds()
+uint8_t Timer::getSeconds()
 {
   return _seconds;
 }
-void Timer::setMinutes(int minutes)
+void Timer::setMinutes(uint8_t minutes)
 {
-  if (minutes < 0)
-    return;
   _minutes = minutes % 60;
 }
-int Timer::getMinutes()
+uint8_t Timer::getMinutes()
 {
   return _minutes;
 }
-void Timer::setHours(int hours)
+void Timer::setHours(uint16_t hours)
 {
-  // check if the hours are below zero or greater than 1152 (48 days)
-  if (hours < 0 || hours >= 1152)
+  if (hours > 1193)
     return;
   _hours = hours;
 }
-int Timer::getHours()
+uint16_t Timer::getHours()
 {
   return _hours;
 }
 
 
-/* ELAPSED TIME */
-
-unsigned long Timer::getTotalElapsedMilliseconds()
+uint32_t Timer::getTotalElapsedMilliseconds()
 {
-  unsigned long mil = millis();
-  unsigned long elapsed = mil - _startTimestamp - _pauseTime;
+  uint32_t mil = millis();
+  uint32_t elapsed = mil - _startTimestamp - _pauseTime;
   if (_timerPaused)
     return elapsed - mil + _pauseTimestamp;
   return elapsed;
 }
-int Timer::getElapsedMilliseconds()
+uint16_t Timer::getElapsedMilliseconds()
 {
-  return (int)(getTotalElapsedMilliseconds() % 1000);
+  return (uint16_t)(getTotalElapsedMilliseconds() % 1000);
 }
-int Timer::getElapsedSeconds()
+uint8_t Timer::getElapsedSeconds()
 {
-  return (int)((getTotalElapsedMilliseconds() / 1000) % 60);
+  return (uint8_t)((getTotalElapsedMilliseconds() / 1000) % 60);
 }
-int Timer::getElapsedMinutes()
+uint8_t Timer::getElapsedMinutes()
 {
-  return (int)((getTotalElapsedMilliseconds() / 1000 / 60) % 60);
+  return (uint8_t)((getTotalElapsedMilliseconds() / 1000 / 60) % 60);
 }
-int Timer::getElapsedHours()
+uint16_t Timer::getElapsedHours()
 {
-  return (int)(getTotalElapsedMilliseconds() / 1000 / 3600);
+  return (uint16_t)(getTotalElapsedMilliseconds() / 1000 / 3600);
 }
 
 
-/* REMAINING TIME */
-
-unsigned long Timer::getTotalRemainingMilliseconds()
+uint32_t Timer::getTotalRemainingMilliseconds()
 {
-  unsigned long elapsed = getTotalElapsedMilliseconds();
-  if (elapsed >= _maxTimerValue)
+  uint32_t elapsed = getTotalElapsedMilliseconds();
+  if (elapsed >= _totalTimerMilliseconds)
     return 0;
-  return _maxTimerValue - elapsed;
+  return _totalTimerMilliseconds - elapsed;
 }
-int Timer::getRemainingMilliseconds()
+uint16_t Timer::getRemainingMilliseconds()
 {
-  return (int)(getTotalRemainingMilliseconds() % 1000);
+  return (uint16_t)(getTotalRemainingMilliseconds() % 1000);
 }
-int Timer::getRemainingSeconds()
+uint8_t Timer::getRemainingSeconds()
 {
-  return (int)((getTotalRemainingMilliseconds() / 1000) % 60);
+  return (uint8_t)((getTotalRemainingMilliseconds() / 1000) % 60);
 }
-int Timer::getRemainingMinutes()
+uint8_t Timer::getRemainingMinutes()
 {
-  return (int)((getTotalRemainingMilliseconds() / 1000 / 60) % 60);
+  return (uint8_t)((getTotalRemainingMilliseconds() / 1000 / 60) % 60);
 }
-int Timer::getRemainingHours()
+uint16_t Timer::getRemainingHours()
 {
-  return (int)(getTotalRemainingMilliseconds() / 1000 / 3600);
+  return (uint16_t)(getTotalRemainingMilliseconds() / 1000 / 3600);
 }
 
 
-/* --- PRIVATE --- */
-
-void Timer::calculateTimerValue()
+void Timer::calculateTotalMilliseconds()
 {
-  unsigned long sec = (unsigned long)_seconds * 1000;
-  unsigned long min = (unsigned long)_minutes * 60 * 1000;
-  unsigned long hrs = (unsigned long)_hours * 3600 * 1000;
+  uint32_t sec = (uint32_t)_seconds * 1000;
+  uint32_t min = (uint32_t)_minutes * 60 * 1000;
+  uint32_t hrs = (uint32_t)_hours * 3600 * 1000;
 
-  _maxTimerValue = sec + min + hrs + _milliseconds;
+  _totalTimerMilliseconds = sec + min + hrs + _milliseconds;
 }
